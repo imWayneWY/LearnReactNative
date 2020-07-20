@@ -12,18 +12,49 @@ import {
   StyleSheet,
   Image,
   TouchableHighlight,
+  FlatList,
 } from "react-native";
 
 import picSplash from "./assets/splash.png";
+import defaultColors from "./data/defaultColors.json";
+import ColorForm from "./components/ColorForm";
+
+import { generate } from "shortid";
 
 const { height, width } = Dimensions.get("window");
+const ColorButton = ({ backgroundColor, onPress = (f) => f }) => {
+  return (
+    <TouchableHighlight
+      style={styles.btn}
+      onPress={() => onPress(backgroundColor)}
+      underlayColor="orange"
+    >
+      <View style={styles.row}>
+        <View style={[styles.sample, { backgroundColor }]} />
+        <Text style={styles.btnText}>{backgroundColor}</Text>
+      </View>
+    </TouchableHighlight>
+  );
+};
 
+const useColors = () => {
+  const [colors, setColors] = useState([]);
+
+  const addColor = (color) => {
+    const newColor = { id: generate(), color };
+    setColors([newColor, ...colors]);
+  };
+  return { colors, addColor };
+}
 export default function App() {
   // const onButtonPress = () => {
   //   Alert.alert(`${new Date().toLocaleTimeString()} button pressed`);
   // };
   const [backgroundColor, setBackgroundColor] = useState("blue");
+  const { colors, addColor } = useColors();
+  
   return (
+    // practice for view and basic knowledge
     // <View style={styles.page}>
     //   {Platform.OS === "ios" && <ProgressViewIOS progress={0.5} />}
     //   {Platform.OS === "android" && <ProgressBarAndroid styleAttr="Horizontal" indeterminate={false} color="blue" progress={0.5} />}
@@ -35,20 +66,37 @@ export default function App() {
     //   <Text style={styles.text}>Width: {width}</Text>
     //   <Image style={styles.image} source={picSplash} />
     // </View>
-    <View style={[styles.container, { backgroundColor }]}>
-      {/* <Text style={styles.button} onPress={() => setBackgroundColor("green")}>
-        green
-      </Text>
-      <Text style={styles.button} onPress={() => setBackgroundColor("red")}>
-        red
-      </Text> */}
-      <TouchableHighlight style={styles.btn} onPress={() => setBackgroundColor("yellow")} underlayColor="orange">
-        <View style={styles.row}>
-          <View style={[styles.sample, { backgroundColor: "yellow" }]} />
-          <Text style={styles.btnText}>yellow</Text>
-        </View>
-      </TouchableHighlight>
-    </View>
+
+    // practice for components
+    // <View style={[styles.container, { backgroundColor }]}>
+    //   {/* <Text style={styles.button} onPress={() => setBackgroundColor("green")}>
+    //     green
+    //   </Text>
+    //   <Text style={styles.button} onPress={() => setBackgroundColor("red")}>
+    //     red
+    //   </Text> */}
+    //   <ColorButton backgroundColor="red" onPress={setBackgroundColor} />
+    //   <ColorButton backgroundColor="green"  onPress={setBackgroundColor} />
+    //   <ColorButton backgroundColor="blue"  onPress={setBackgroundColor} />
+    //   <ColorButton backgroundColor="yellow"  onPress={setBackgroundColor} />
+    //   <ColorButton backgroundColor="purple"  onPress={setBackgroundColor} />
+    // </View>
+    <>
+      <ColorForm onNewColor={addColor} />
+      <FlatList
+        style={[styles.listContainer, { backgroundColor }]}
+        data={colors}
+        renderItem={({ item }) => {
+          return (
+            <ColorButton
+              key={item.id}
+              backgroundColor={item.color}
+              onPress={setBackgroundColor}
+            />
+          );
+        }}
+      />
+    </>
   );
 }
 
@@ -111,5 +159,9 @@ const styles = StyleSheet.create({
   row: {
     flexDirection: "row",
     alignItems: "center",
-  }
+  },
+  listContainer: {
+    flex: 1,
+    display: "flex",
+  },
 });
