@@ -13,6 +13,7 @@ import {
   Image,
   TouchableHighlight,
   FlatList,
+  SwipeableFlatList,
   AsyncStorage,
 } from "react-native";
 
@@ -38,6 +39,8 @@ const ColorButton = ({ backgroundColor, onPress = (f) => f }) => {
     </TouchableHighlight>
   );
 };
+
+
 
 const useColors = () => {
   const [colors, setColors] = useState([]);
@@ -65,12 +68,16 @@ const useColors = () => {
   };
   return { colors, addColor };
 };
+
+
 export default function ColorList({ navigation }) {
   // const onButtonPress = () => {
   //   Alert.alert(`${new Date().toLocaleTimeString()} button pressed`);
   // };
   const [backgroundColor, setBackgroundColor] = useState("blue");
   const { colors, addColor } = useColors();
+
+
 
   return (
     // practice for view and basic knowledge
@@ -102,6 +109,7 @@ export default function ColorList({ navigation }) {
     // </View>
     <>
       <ColorForm onNewColor={addColor} />
+      
       <FlatList
         style={[styles.listContainer]}
         data={colors}
